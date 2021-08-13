@@ -179,8 +179,6 @@ const resolvers: Resolvers<ApolloContext> = {
     updateUser: async (parent, args, { prisma, req }, info) => {
       const { userId, role: userRole } = getUserIdAndRole(req, false)
 
-      console.log(userId)
-
       // I decided not to handle role logic in this mutation
       // instead, the user will be a 'Restaurant_Owner' if they have restaurants or not
       // see retaurant resolvers for example
@@ -189,7 +187,7 @@ const resolvers: Resolvers<ApolloContext> = {
       // users can update themselves
       // only admins can update other users
       if (userId !== idToUpdate && userRole !== "ADMIN") {
-        throw new Error("User does not have permissions to update this role")
+        throw new Error("User does not have permissions to update this profile")
       }
 
       let updatedUser: User | null

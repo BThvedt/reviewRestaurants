@@ -25,8 +25,8 @@ let ReviewListHeader: FC<IProps> = ({ review }) => {
               count={5}
               size={25}
               edit={false}
-              color={"transparent"}
-              activeColor={"#aaa"}
+              color={"#ddd"}
+              activeColor="#818cf8"
               isHalf={true}
               value={Math.round(review.rating.stars * 2) / 2}
             />

@@ -67,7 +67,6 @@ let UserPage: FC<IProps> = ({ siteUser }) => {
         and restuarnts (if they own restaurants)
         Also if it's your own profile, you can use 'Restaurants'
         to create restaurants. If you're not an owner,
-
       */}
 
       <TitleOrMenu
@@ -90,9 +89,9 @@ let UserPage: FC<IProps> = ({ siteUser }) => {
         <Route path="/users/:id/profile">
           <UserProfile siteUser={siteUser} />
         </Route>
-        <Route path="/users/*">
+        {/* <Route path="/users/*">
           <Redirect to={`/users/${id}/reviews`} />
-        </Route>
+        </Route> */}
       </Switch>
     </>
   )

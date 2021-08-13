@@ -8,7 +8,8 @@ import { TitleOrMenu } from "components"
 import { FormatDate } from "lib"
 import ReactStars from "react-rating-stars-component"
 import { CurrentUser } from "types"
-import { CommentReply, ReviewListItem } from "components"
+import { ReviewListItem } from "components"
+import CreateReviewForm from "./CreateReviewForm"
 
 interface ParamTypes {
   id: string
@@ -21,6 +22,8 @@ interface IProps {
 let RestaurantDetail: FC<IProps> = ({ siteUser }) => {
   const [restaurant, setRestaurant] = useState<Restaurant>()
   const [featuredReview, setFeaturedReview] = useState<Review | null>()
+  const [bestReview, setBestReview] = useState<Review | null>()
+  const [worstReview, setWorstReview] = useState<Review | null>()
   const [reviews, setReviews] = useState<Review[]>()
 
   let { id } = useParams<ParamTypes>()
@@ -38,22 +41,39 @@ let RestaurantDetail: FC<IProps> = ({ siteUser }) => {
   useEffect(() => {
     // there should always be a restaurant exept if error .. this is just to make typescript happy
     if (!loading && getRestaurant) {
-      const { featured_review, restaurant } = getRestaurant
+      const { restaurant } = getRestaurant
 
       if (!restaurant) return
 
       setRestaurant(restaurant!)
-      setFeaturedReview(featured_review)
 
       let { reviews } = restaurant
 
-      if (featured_review) {
-        // if there's a featured review, there's at least one review! Don't be afraid of all the '!' here
-        const featuredId = featured_review.id
-        reviews = reviews!.filter((review) => {
-          console.log({ featuredId, reviewId: review!.id })
-          return review!.id !== featuredId
-        })
+      // nah.. let's not do a featured review here
+      // if (featured_review) {
+      //   // if there's a featured review, there's at least one review! Don't be afraid of all the '!' here
+      //   const featuredId = featured_review.id
+      //   reviews = reviews!.filter((review) => {
+      //     console.log({ featuredId, reviewId: review!.id })
+      //     return review!.id !== featuredId
+      //   })
+      // }
+
+      // but we do need the best and worst reviews
+      if (reviews && reviews.length) {
+        // get best review. Just sort by rating
+
+        const sortedAndRatedReviews = reviews
+          .filter((r) => r.rating?.stars)
+          .sort((a, b) => (a.rating!.stars > b.rating!.stars ? -1 : 1))
+
+        setBestReview(sortedAndRatedReviews[0])
+
+        if (sortedAndRatedReviews.length > 1) {
+          setWorstReview(
+            sortedAndRatedReviews[sortedAndRatedReviews.length - 1]
+          )
+        }
       }
 
       if (reviews && reviews.length) {
@@ -90,7 +110,7 @@ let RestaurantDetail: FC<IProps> = ({ siteUser }) => {
               count={5}
               size={45}
               edit={false}
-              color={"#bbb"}
+              color={"#ddd"}
               activeColor="#818cf8"
               isHalf={true}
               value={
@@ -100,58 +120,97 @@ let RestaurantDetail: FC<IProps> = ({ siteUser }) => {
               }
             />
             <p>- Average Rating: {restaurant.average_rating?.toFixed(2)} -</p>
-            {(restaurant.num_of_ratings || restaurant.num_of_reviews) && (
+            {restaurant.num_of_ratings || restaurant.num_of_reviews ? (
               <p className="text-gray-700 text-sm">
                 {restaurant.num_of_ratings || 0}{" "}
                 {`Rating${restaurant.num_of_ratings || 0 > 1 ? "s" : ""}`}{" "}
                 {restaurant.num_of_reviews || 0}{" "}
                 {`Review${restaurant.num_of_reviews || 0 > 1 ? "s" : ""}`}{" "}
               </p>
+            ) : (
+              <></>
             )}
-            {featuredReview && (
-              <>
-                <p className="text-xl font-bold p-4 pb-1">Featured Review:</p>
-                <p className="text-sm pb-2">
-                  Visited {FormatDate(new Date(featuredReview.visited))}
-                </p>
-                <p className="italic text-lg">
-                  "{featuredReview.comment?.title}"
-                </p>
-                <ReactStars
-                  count={5}
-                  size={25}
-                  edit={false}
-                  color={"transparent"}
-                  activeColor={"#aaa"}
-                  isHalf={true}
-                  value={
-                    restaurant.average_rating
-                      ? Math.round(restaurant.average_rating * 2) / 2
-                      : 0
-                  }
-                />
-                <p className="text-lg text-gray-700 text-center mt-1">
-                  {featuredReview.comment?.text}
-                </p>
 
-                <Link to={`/users/${featuredReview.user?.id}/reviews`}>
-                  <p className="text-gray-700 hover:text-green-400">
-                    - {featuredReview.user?.name} (
-                    {featuredReview.user?.num_of_reviews}{" "}
-                    {`Review${
-                      featuredReview.user?.num_of_reviews || 0 > 1 ? "s" : ""
-                    }`}
-                    )
+            {bestReview ? (
+              <div className="text-gray-700 flex justify-center items-start">
+                <div
+                  className={`m-4 text-gray-700 flex items-center  flex-col ${
+                    worstReview ? "w-1/2" : ""
+                  }`}
+                >
+                  <h1 className="text-lg font-bold  pb-1 text-center">
+                    Best Review
+                  </h1>
+
+                  <ReactStars
+                    count={5}
+                    size={20}
+                    edit={false}
+                    color={"#ddd"}
+                    activeColor="#818cf8"
+                    isHalf={true}
+                    value={bestReview.rating?.stars}
+                  />
+                  <p className="text-sm pb-2">
+                    Visited {FormatDate(new Date(bestReview.visited))}
                   </p>
-                </Link>
-
-                <CommentReply
-                  review={featuredReview}
-                  restaurant={restaurant}
-                  siteUser={siteUser}
-                />
-              </>
+                  {bestReview.comment && (
+                    <>
+                      <p className="italic">"{bestReview.comment?.title}"</p>
+                      <p className="mb-2">{bestReview.comment?.text}</p>
+                    </>
+                  )}
+                  <Link to={`/users/${bestReview.user?.id}/reviews`}>
+                    <p className="text-gray-700 hover:text-green-400 text-sm">
+                      - {bestReview.user?.name} (
+                      {bestReview.user?.num_of_reviews}{" "}
+                      {`Review${
+                        bestReview.user?.num_of_reviews || 0 > 1 ? "s" : ""
+                      }`}
+                      )
+                    </p>
+                  </Link>
+                </div>
+                {worstReview && (
+                  <div className="m-4 text-gray-700 flex items-center  flex-col w-1/2">
+                    <h1 className="text-lg font-bold  pb-2 text-center">
+                      Worst Review
+                    </h1>
+                    <ReactStars
+                      count={5}
+                      size={20}
+                      edit={false}
+                      color={"#ddd"}
+                      activeColor="#818cf8"
+                      isHalf={true}
+                      value={worstReview.rating?.stars}
+                    />
+                    <p className="text-sm pb-2">
+                      Visited {FormatDate(new Date(bestReview.visited))}
+                    </p>
+                    {worstReview.comment && (
+                      <>
+                        <p className="italic">"{worstReview.comment?.title}"</p>
+                        <p>{worstReview.comment?.text}</p>
+                      </>
+                    )}
+                    <Link to={`/users/${worstReview.user?.id}/reviews`}>
+                      <p className="text-gray-700 hover:text-green-400 text-sm">
+                        - {worstReview.user?.name} (
+                        {worstReview.user?.num_of_reviews}{" "}
+                        {`Review${
+                          worstReview.user?.num_of_reviews || 0 > 1 ? "s" : ""
+                        }`}
+                        )
+                      </p>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <></>
             )}
+            <CreateReviewForm restaurant_id={id} siteUser={siteUser} />
             {reviews && (
               <div className="text-gray-700 ">
                 <p className="text-lg font-bold p-4 pb-2 text-center">

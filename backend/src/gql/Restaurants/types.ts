@@ -182,6 +182,7 @@ export type GetRestaurantsInput = {
   direction: AscendingOrDescending;
   page: Scalars['Int'];
   recordsPerPage: Scalars['Int'];
+  exclude_avg_below?: Maybe<Scalars['Float']>;
 };
 
 

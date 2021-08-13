@@ -25,12 +25,10 @@ const RestaurantTitle: FC<IProps> = ({
             {name}
           </h1>
           <p className="text-sm group-hover:text-green-500">
-            {num_of_reviews}{" "}
-            {`Review${num_of_reviews && num_of_reviews > 1 ? "s" : ""}`}
+            {num_of_reviews} {`Review${num_of_reviews !== 1 ? "s" : ""}`}
           </p>
         </div>
       </Link>
-
       <div className="flex justify-start items-start">
         <div>
           <div>
@@ -41,10 +39,11 @@ const RestaurantTitle: FC<IProps> = ({
             </h3>
           </div>
 
-          <p className="text-sm">
-            {num_of_ratings}{" "}
-            {`Rating${num_of_ratings && num_of_ratings > 1 ? "s" : ""}`}
-          </p>
+          {num_of_ratings !== 0 && (
+            <p className="text-sm">
+              {num_of_ratings} {`Rating${num_of_ratings !== 1 ? "s" : ""}`}
+            </p>
+          )}
         </div>
 
         <div className="relative bottom-3">
@@ -52,7 +51,7 @@ const RestaurantTitle: FC<IProps> = ({
             count={5}
             size={30}
             edit={false}
-            color={"#bbb"}
+            color={"#ddd"}
             activeColor="#818cf8"
             isHalf={true}
             value={average_rating ? Math.round(average_rating * 2) / 2 : 0}

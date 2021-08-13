@@ -188,28 +188,6 @@ export const GET_RESTAURANTS_BY_OWNER = gql`
 export const GET_RESTAURANT = gql`
   query GetRestaurant($id: ID!) {
     getRestaurant(id: $id) {
-      featured_review {
-        visited
-        comment {
-          title
-          text
-          reply {
-            text
-            user {
-              id
-              name
-            }
-          }
-        }
-        rating {
-          stars
-        }
-        user {
-          id
-          name
-          num_of_reviews
-        }
-      }
       restaurant {
         name
         average_rating

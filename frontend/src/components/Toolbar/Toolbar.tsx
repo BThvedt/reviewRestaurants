@@ -41,7 +41,7 @@ const Toolbar: FC<IProps> = ({ siteUser, bodyClickToggle }) => {
 
   return (
     <header
-      className="lg:px-16 px-6 bg-white flex flex-wrap items-center lg:py-0 py-2"
+      className="px-16 px-6 bg-white flex flex-wrap items-centerpy-0 "
       onClick={(e: MouseEvent) => {
         e.stopPropagation()
         setShowProfileDropdown(false)
@@ -56,17 +56,14 @@ const Toolbar: FC<IProps> = ({ siteUser, bodyClickToggle }) => {
               className="cursor-pointer block w-10 h-10 "
             />
           </Link>
-          <label
+          {/* <label
             htmlFor="meno-toggle"
             className="cursor-pointer lg:hidden block w-10 h-10"
           >
             <img src={HamburgerIcon} alt="hamburger icon" />
-          </label>
+          </label> */}
           <input type="checkbox" className="hidden" id="menu-toggle" />
-          <div
-            className="hidden lg:flex lg:items-center lg:w-auto w-full"
-            id="menu"
-          >
+          <div className="hidden lg:flex items-center w-auto w-full" id="menu">
             <nav>
               <ul className="lg:flex items-center justify-between text-base text-gray-700 pt-4 lg:pt-0">
                 <li>
@@ -81,7 +78,7 @@ const Toolbar: FC<IProps> = ({ siteUser, bodyClickToggle }) => {
 
         {siteUser?.id && (
           <div className="flex justify-left items-center ">
-            <ul className="lg:flex items-center justify-between text-base text-gray-700 pt-4 lg:pt-0 mr-8">
+            <ul className="flex items-center justify-between text-base text-gray-700 pt-0 mr-8">
               <li
                 className={`cursor-pointer py-4 block border-b-2 border-transparent hover:border-indigo-400 ml-4 text ${
                   location.pathname.includes("restaurants")

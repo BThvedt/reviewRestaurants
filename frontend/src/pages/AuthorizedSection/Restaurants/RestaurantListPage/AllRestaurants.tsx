@@ -1,17 +1,25 @@
-import React, { useState, useEffect, FC } from "react"
+import React, { useState, useEffect, FC, useMemo, useCallback } from "react"
 import { GET_RESTAURANTS } from "gql/queries"
 import {
   RestaurantReturnData,
   RestaurantsReturnData
 } from "generated/graphql-frontend"
-import { useQuery } from "@apollo/client"
+import { useQuery, useApolloClient } from "@apollo/client"
 import Pager from "components/Pager"
 import RestaurantList from "components/Restaurant/RestaurantList"
+import debounce from "lodash.debounce"
 
 let AllRestaurants: FC = () => {
-  let [page, setPage] = useState(0)
-  let [restaurantCount, setRestaurantCount] = useState(0)
-  let [restaurantList, setRestuarantList] = useState<RestaurantReturnData[]>([])
+  const [page, setPage] = useState(0)
+  const [restaurantCount, setRestaurantCount] = useState(0)
+  const [sliderVal, setSliderVal] = useState<number>(0)
+  const [starFilter, setStarFilter] = useState<number>(0)
+  const [orderBy, setOrderBy] = useState("average_rating")
+  const [direction, setDirection] = useState("desc")
+  const [restaurantList, setRestuarantList] = useState<RestaurantReturnData[]>(
+    []
+  )
+  const client = useApolloClient()
 
   // note to self: there should be a better way to type these useQueries, but can't quite get it to work
   // try to figure out sometime later
@@ -28,21 +36,30 @@ let AllRestaurants: FC = () => {
       data: {
         page: page,
         recordsPerPage: 20,
-        orderBy: "average_rating",
-        direction: "desc"
+        orderBy: orderBy,
+        direction,
+        exclude_avg_below: starFilter
       }
     }
   })
 
   useEffect(() => {
-    if (count && !restaurantCount) {
+    console.log({})
+    if (!loading && count) {
       setRestaurantCount(count)
     }
 
     if (!loading && restaurants.length) {
       setRestuarantList(restaurants)
     }
-  }, [count, restaurants])
+  }, [count, restaurants, loading])
+
+  const delayedQuery = useCallback(
+    debounce((sliderVal: number) => {
+      setStarFilter(sliderVal)
+    }, 1000),
+    []
+  )
 
   if (error) {
     return <p>Something went wrong</p>
@@ -50,9 +67,48 @@ let AllRestaurants: FC = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center">
-        {restaurantCount && (
-          <>
+      {restaurantCount && (
+        <>
+          <div className="flex mt-4 justify-evenly items-start space-around text-grey-700">
+            <div className="flex flex-col mt-4 justify-center mr-8">
+              <p className="mb-2">Exlude Ratings Below</p>
+              <input
+                type="range"
+                min="0"
+                max="4.9"
+                value={sliderVal}
+                step={0.1}
+                className="mb-2"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setSliderVal(parseFloat(e.target.value))
+                  delayedQuery(parseFloat(e.target.value))
+                }}
+              />
+              <p className="mr-2 w-16 mr-2">{sliderVal} Stars</p>
+            </div>
+
+            <div className="flex flex-col mt-4 justify-center mr-8">
+              <p className="mb-2">Order By</p>
+              <select
+                name="orderBy"
+                onChange={(e) => setOrderBy(e.target.value)}
+              >
+                <option value="average_rating">Avg Rating</option>
+                <option value="num_of_ratings"># of Ratings</option>
+              </select>
+            </div>
+            <div className="flex flex-col mt-4 justify-center">
+              <p className="mb-2">Direction</p>
+              <select
+                name="orderDirectoin"
+                onChange={(e) => setDirection(e.target.value)}
+              >
+                <option value="desc">Desc.</option>
+                <option value="asc">Asc.</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex justify-between items-center">
             <div className="flex items-center">
               <p>
                 {20 * page + 1}-{20 * page + restaurants.length} of{" "}
@@ -66,9 +122,9 @@ let AllRestaurants: FC = () => {
               count={restaurantCount}
               itemsPerPage={20}
             />
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      )}
 
       <div>
         {/* Perhaps a loading animation or a transition would be good here */}

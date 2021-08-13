@@ -1,0 +1,21 @@
+#create-review-datepicker {
+  position: relative;
+  .react-datepicker__input-container {
+    input {
+      padding: 6px;
+      border-radius: 0.375rem;
+      color: rgba(75, 85, 99, var(--tw-text-opacity));
+      border: 1px solid;
+      border-color: rgba(229, 231, 235, var(--tw-border-opacity));
+      text-align: center;
+    }
+  }
+  .react-datepicker {
+    position: relative;
+    left: 110px !important;
+    top: 4px !important;
+  }
+  .react-datepicker__triangle {
+    left: -110px !important;
+  }
+}

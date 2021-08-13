@@ -34,6 +34,7 @@ input getRestaurantsInput {
   direction: AscendingOrDescending!
   page: Int!
   recordsPerPage: Int!
+  exclude_avg_below: Float
 }
 
 type RestaurantData {

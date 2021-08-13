@@ -27,6 +27,7 @@ const classes = {
     "bg-green-400 py-2 px-4 text-sm text-white rounded border border-green focus:outline-none focus:border-green-dark"
 }
 
+// hmm might be more trouble that it's worth for small forms
 const updateValidationSchema = yup
   .object({
     name: yup
@@ -111,7 +112,7 @@ const UserProfilePage: FC<IProps> = ({ siteUser }) => {
   const [updateUser, { data }] = useMutation(UPDATE_USER, {
     // a more database efficient way to do this would be to use 'writeQuery'
     // or create custom hook that calls it like in the docs
-    // .. but I'm in a bit of a time crunch!
+    // .. but time is a little bit at a preminum!
     refetchQueries: [
       { query: GET_USER_BY_ID, variables: { id } },
       { query: GET_CURRENT_USER },
@@ -131,11 +132,10 @@ const UserProfilePage: FC<IProps> = ({ siteUser }) => {
   const onSubmit = React.useMemo(() => {
     return createSubmitHandler(
       (values) => {
-        //alert("submitted")
-
         let { passwordRepeat, ...data } = values
 
-        console.log({ idToUpdate: id, ...data })
+        setShowError(false)
+        setShowSuccess(false)
 
         updateUser({
           variables: {
@@ -145,14 +145,14 @@ const UserProfilePage: FC<IProps> = ({ siteUser }) => {
         })
       },
       (errors, values, yupErrors) => {
-        alert("please check your form")
+        setShowError(true)
       }
     )
   }, [])
 
-  if (id !== siteUser.id && siteUser.role !== UserRole.Admin) {
-    return <Redirect to={`/users/${id}/reviews`} />
-  }
+  // if (id !== siteUser.id && siteUser.role !== UserRole.Admin) {
+  //   return <Redirect to={`/users/${id}/reviews`} />
+  // }
 
   return (
     <div className="flex items-center flex-col">

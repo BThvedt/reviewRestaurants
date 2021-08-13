@@ -27,8 +27,8 @@ const FeaturedReview: FC<IProps> = ({ featured_review, isPreview }) => {
             count={5}
             size={20}
             edit={false}
-            color={"#fff"}
-            activeColor={"#aaa"}
+            color={"#ddd"}
+            activeColor="#999"
             isHalf={true}
             value={rating?.stars ? Math.round(rating.stars * 2) / 2 : 0}
           />

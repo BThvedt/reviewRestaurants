@@ -185,6 +185,8 @@ const resolvers: Resolvers<ApolloContext> = {
 
       let { visited, restaurant_id, comment, rating } = data
 
+      // reminder: one review per restaurant per user is enforced at the db schema level
+      // but additional validation happens here.. it has to have either a comment OR a rating OR both ...
       validateReview(comment, rating)
 
       let review: Review
@@ -202,6 +204,7 @@ const resolvers: Resolvers<ApolloContext> = {
           }
         })
       } catch (e) {
+        console.log(e)
         throw new Error("Something went wrong creating the review")
       }
 

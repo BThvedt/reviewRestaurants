@@ -5,7 +5,8 @@ import { IResolvers, UserInputError } from "apollo-server"
 import getUserIdAndRole from "../../utils/getUserIdAndRole"
 
 const resolvers: Resolvers<ApolloContext> = {
-  // if I had time I'd refacter "featured_review" into Restaurant
+  // I thought it would be fun to have a 'featured review' on the restaurant list
+  // I have a resolver here in case I decide I need it ever.. optional to query
   RestaurantData: {
     featured_review: async ({ restaurant: parent }, args, { prisma }, info) => {
       let restaurant = await prisma.restaurant.findUnique({
@@ -28,7 +29,7 @@ const resolvers: Resolvers<ApolloContext> = {
             take: 1,
             orderBy: {
               rating: {
-                stars: "asc"
+                stars: "desc"
               }
             }
           }
@@ -161,9 +162,9 @@ const resolvers: Resolvers<ApolloContext> = {
 
           const [featured_review] = reviews
             .filter((review) => {
-              return review.rating && review.comment
+              return review.rating?.stars && review.comment
             })
-            .sort((a, b) => (a.rating! > b.rating! ? 1 : -1))
+            .sort((a, b) => (a.rating!.stars > b.rating!.stars ? -1 : 1))
 
           const reviews_pending_reply = reviews.filter((review) => {
             return review.comment && !review.comment.reply
@@ -189,7 +190,13 @@ const resolvers: Resolvers<ApolloContext> = {
     getRestaurants: async (parent, { data }, { prisma, req }, info) => {
       const { userId } = getUserIdAndRole(req) // open to all logged in users, but throws error if not logged in
 
-      let { orderBy: orderByField, direction, page, recordsPerPage } = data
+      let {
+        orderBy: orderByField,
+        direction,
+        page,
+        recordsPerPage,
+        exclude_avg_below
+      } = data
 
       let orderByClause: { [field: string]: AscendingOrDescending }[] = [
         {
@@ -201,11 +208,26 @@ const resolvers: Resolvers<ApolloContext> = {
         page = 0
       }
 
+      if (!exclude_avg_below) {
+        exclude_avg_below = 0
+      }
+
       try {
         // hmm.. wonder if some type of aggrigation table would be more performant. idk
         let [count, restaurants] = await prisma.$transaction([
-          prisma.restaurant.count(), // undecided on best way to do this .. probably a 2nd query to get this seperate would be better
+          prisma.restaurant.count({
+            where: {
+              average_rating: {
+                gte: exclude_avg_below
+              }
+            }
+          }), // undecided on best way to do this .. probably a 2nd query to get this seperate would be better
           prisma.restaurant.findMany({
+            where: {
+              average_rating: {
+                gte: exclude_avg_below
+              }
+            },
             orderBy: orderByClause,
             take: recordsPerPage,
             skip: recordsPerPage * page,
@@ -260,6 +282,16 @@ const resolvers: Resolvers<ApolloContext> = {
   },
   Mutation: {
     createRestaurant: async (parent, { data }, { prisma, req }, info) => {
+      const { userId, role } = getUserIdAndRole(req)
+
+      let { owner_id, name } = data
+
+      if (userId !== owner_id && role !== "ADMIN") {
+        throw new Error(
+          "User does not have permissions to create this restaurant"
+        )
+      }
+
       let restaurant: Restaurant
 
       try {
@@ -268,6 +300,35 @@ const resolvers: Resolvers<ApolloContext> = {
         })
       } catch (e) {
         throw new Error("Something went wrong creating the restaurant")
+      }
+
+      // make sure the user now has a role of restaurant owner
+      try {
+        let user = await prisma.user.findUnique({
+          where: {
+            id: owner_id
+          }
+        })
+
+        if (!user) {
+          throw new Error("Error while updating user")
+        }
+
+        if (
+          user.role !== UserRole.ADMIN &&
+          user.role !== UserRole.RESTAURANT_OWNER
+        ) {
+          await prisma.user.update({
+            where: {
+              id: owner_id
+            },
+            data: {
+              role: UserRole.RESTAURANT_OWNER
+            }
+          })
+        }
+      } catch {
+        throw new Error("Error while updating users role")
       }
 
       return restaurant

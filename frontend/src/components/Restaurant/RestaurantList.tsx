@@ -35,7 +35,6 @@ let RestaurantList: FC<IProps> = ({ restaurants, ownerId, siteUser }) => {
         // since I use this in multiple situations, have to typecheck AND check if the userId is the siteuser id
         // could probably use a refactor
         if (isRestaurantOwnerData(restaurantData)) {
-          console.log({ ownerId, siteUser })
           if (ownerId && siteUser && ownerId !== siteUser.id) {
             reviews_pending_reply = null
           } else {
@@ -57,19 +56,23 @@ let RestaurantList: FC<IProps> = ({ restaurants, ownerId, siteUser }) => {
               average_rating={average_rating}
               id={id}
             />
-            {featured_review && (
+            {featured_review ? (
               <FeaturedReview
                 featured_review={featured_review}
                 isPreview={true}
               />
+            ) : (
+              <></>
             )}
-            {reviews_pending_reply && (
+            {reviews_pending_reply ? (
               <Link
                 to={`/restaurants/${id}`}
                 className="flex justify-center text-red-400 hover:text-green-400"
               >
                 {reviews_pending_reply} Reviews Pending Reply
               </Link>
+            ) : (
+              <></>
             )}
           </ListContainer>
         )
