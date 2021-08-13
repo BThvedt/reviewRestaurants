@@ -1,0 +1,88 @@
+# through the interface, only regular and 'restaurantowner' roles can be created!
+enum UserRole {
+  REGULAR
+  RESTAURANT_OWNER
+  ADMIN
+}
+
+enum AscendingOrDescending {
+  desc
+  asc
+}
+
+scalar DateTime
+
+type User {
+  id: ID!
+  email: String!
+  password: String!
+  name: String!
+  role: UserRole!
+  restaurants: [Restaurant]
+  reviews: [Review]
+  ratings: [Rating]
+  comments: [Comment]
+  replies: [Reply]
+  num_of_reviews: Int
+}
+
+type Restaurant {
+  id: ID!
+  name: String!
+  owner_id: String!
+  owner: User
+  average_rating: Float
+  num_of_ratings: Int
+  num_of_reviews: Int # see code for undecided thoughts on best way to aggrigate.. I do each one a little different
+  reviews: [Review!] # oof typescript doin' some complainin' on the frontend! Gotta throw a '!' in this array!
+}
+
+# reviews have ratings and/or comments
+# users and restaurants have their own resolvers, but comments and ratings are just returned directly
+type Review {
+  id: ID!
+  visited: DateTime! # just gonna take this however it comes in, remember use toISOString() to convert it to the format the database likes
+  rating: Rating
+  comment: Comment
+  user_id: String!
+  restaurant_id: String!
+  user: User
+  restaurant: Restaurant
+}
+
+type Rating {
+  # stars: StarRating!
+  id: ID!
+  restaurant_id: String
+  restaurant: Restaurant
+  stars: Float!
+}
+
+type Comment {
+  id: ID!
+  title: String!
+  text: String!
+  restaurant_id: String
+  reply_id: String
+  review: Review
+  reply: Reply
+}
+
+type Reply {
+  id: ID!
+  title: String!
+  text: String!
+  user_id: String!
+  comment_id: String!
+  user: User
+  comment: Comment
+  review: Review
+  restaurant: Restaurant
+}
+
+type Query {
+  root: String
+}
+type Mutation {
+  root: String
+}

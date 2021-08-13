@@ -1,0 +1,44 @@
+generates:
+  ./src/gql/root/types.ts:
+    schema: ./src/gql/root/schema.graphql
+    config:
+      enumsAsTypes: true
+    plugins:
+      - "typescript"
+      - "typescript-resolvers"
+  ./src/gql/Users/types.ts:
+    schema:
+      - ./src/gql/root/schema.graphql
+      - ./src/gql/Users/schema.graphql
+    config:
+      enumsAsTypes: true
+    plugins:
+      - "typescript"
+      - "typescript-resolvers"
+  ./src/gql/Restaurants/types.ts:
+    schema:
+      - ./src/gql/root/schema.graphql
+      - ./src/gql/Restaurants/schema.graphql
+    config:
+      enumsAsTypes: true
+    plugins:
+      - "typescript"
+      - "typescript-resolvers"
+  ./src/gql/ReviewsRatingsAndComments/types.ts:
+    schema:
+      - ./src/gql/root/schema.graphql
+      - ./src/gql/ReviewsRatingsAndComments/schema.graphql
+    config:
+      enumsAsTypes: true
+    plugins:
+      - "typescript"
+      - "typescript-resolvers"
+  ./src/gql/Replies/types.ts:
+    schema:
+      - ./src/gql/root/schema.graphql
+      - ./src/gql/Replies/schema.graphql
+    config:
+      enumsAsTypes: true
+    plugins:
+      - "typescript"
+      - "typescript-resolvers"

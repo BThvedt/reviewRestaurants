@@ -1,0 +1,58 @@
+# type User {
+#   id: ID!
+#   email: String!
+#   password: String!
+#   name: String!
+#   role: UserRole!
+#   restaurants: [Restaurant]
+#   reviews: [Review]
+#   ratings: [Rating]
+#   comments: [Comment]
+#   replies: [Reply]
+# }
+
+extend type Query {
+  currentUser: User
+  getUser(id: ID!): User
+  getUserNameAndRole(id: ID!): NameAndRoleData
+  getUsers: [User]
+  test: String
+}
+
+extend type Mutation {
+  createUser(data: CreateUserInput!): User!
+  updateUser(id: ID!, data: UpdateUserInput!): User!
+  deleteUser(id: ID!): User!
+  login(data: LoginUserInput!): UserOrTokenPayload!
+  logout: Boolean
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  idToUpdate: ID!
+  name: String!
+  email: String!
+  password: String
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+type TokenPayload {
+  token: String!
+  user: User!
+}
+
+type NameAndRoleData {
+  name: String!
+  role: String!
+}
+
+union UserOrTokenPayload = User | TokenPayload

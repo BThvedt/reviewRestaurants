@@ -1,0 +1,92 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: database-disk
+  namespace: toptal
+  labels:
+    stage: production
+    name: database
+    app: mysql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: mysql
+    name: database
+    stage: production
+  name: database
+  namespace: toptal
+spec:
+  progressDeadlineSeconds: 2147483647
+  replicas: 1
+  revisionHistoryLimit: 2147483647
+  selector:
+    matchLabels:
+      app: mysql
+      name: database
+      stage: production
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: mysql
+        name: database
+        stage: production
+    spec:
+      containers:
+        - args:
+            - --ignore-db-dir=lost+found
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-root-pass
+                  key: MYSQL_ROOT_PASS
+          image: mysql:5.7
+          imagePullPolicy: IfNotPresent
+          name: mysql
+          ports:
+            - containerPort: 3306
+              name: mysql-3306
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: database-disk
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: database-disk
+          persistentVolumeClaim:
+            claimName: database-disk
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+  namespace: toptal
+spec:
+  ports:
+    - port: 3306
+      targetPort: 3306
+      protocol: TCP
+  selector:
+    stage: production
+    name: database
+    app: mysql

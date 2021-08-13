@@ -1,0 +1,58 @@
+# type Restaurant {
+#   id: ID!
+#   name: String
+#   owner: User
+#   average_rating: Float
+#   reviews: [Review]
+# }
+enum OrderByField {
+  average_rating
+  num_of_ratings
+}
+
+# if I had time I'd refactor featured_review into Restaurant type
+extend type Query {
+  getRestaurant(id: ID!): RestaurantData!
+  getRestaurants(data: getRestaurantsInput!): RestaurantsReturnData!
+  getRestaurantsByOwner(ownerId: ID!): [RestaurantOwnerReturnData]!
+  getRestaurantCount: Int!
+}
+
+extend type Mutation {
+  createRestaurant(data: RestaurantInput!): Restaurant
+  updateRestaurant(id: ID!, data: RestaurantInput!): Restaurant
+  deleteRestaurant(id: ID!): Restaurant
+}
+
+input RestaurantInput {
+  name: String!
+  owner_id: ID!
+}
+
+input getRestaurantsInput {
+  orderBy: OrderByField!
+  direction: AscendingOrDescending!
+  page: Int!
+  recordsPerPage: Int!
+}
+
+type RestaurantData {
+  restaurant: Restaurant
+  featured_review: Review
+}
+
+type RestaurantsReturnData {
+  count: Int!
+  restaurants: [RestaurantReturnData!]!
+}
+
+type RestaurantReturnData {
+  restaurant: Restaurant
+  featured_review: Review
+}
+
+type RestaurantOwnerReturnData {
+  restaurant: Restaurant
+  featured_review: Review
+  reviews_pending_reply: Int!
+}

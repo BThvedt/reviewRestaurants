@@ -1,0 +1,32 @@
+# type Reply {
+#   id: ID!
+#   title: String!
+#   text: String!
+#   user_id: String!
+#   comment_id: String!
+#   user: User
+#   comment: Comment
+#   review: Review
+#   restaurant: Restaurant
+# }
+
+# lets get rid of the title - later
+
+extend type Query {
+  getReply(id: ID!): Reply
+  getRepliesByUser(userId: ID!): [Reply]
+  getRepliesByResturant(restaurantId: ID!): [Reply]
+  getReplies: [Reply]
+}
+
+extend type Mutation {
+  createReply(data: ReplyInput!): Reply
+  updateReply(id: ID!, data: ReplyInput!): Reply
+  deleteReply(id: ID!): Reply
+}
+
+input ReplyInput {
+  title: String!
+  text: String!
+  comment_id: String!
+}

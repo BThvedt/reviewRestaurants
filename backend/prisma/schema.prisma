@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["referentialActions", "selectRelationCount", "orderByRelation"]
+}
+
+enum UserRole {
+  REGULAR
+  RESTAURANT_OWNER
+  ADMIN
+}
+
+model User {
+  id    String  @id @default(uuid())
+  email   String   @unique
+  password String 
+  name    String
+  role  UserRole @default(REGULAR)
+  restaurants Restaurant[]
+  reviews Review[]
+  replies Reply[]
+}
+
+model Restaurant {
+  id String @id @default(uuid())
+  name String 
+  owner_id String 
+  owner User @relation(fields: [owner_id], references: [id], onDelete: Cascade) 
+  average_rating Float @default(0)
+  num_of_ratings Int @default(0) // note to self: see docs for prisma's new selectRelationCount for a possible different way to do this
+  reviews Review[]
+
+  // need a unique index for upserts. In real life, probably use a location (lat, long) or something
+  @@unique([owner_id, name], name: "owner_id_and_name")
+}
+
+model Review {
+  id String @id @default(uuid())
+  visited DateTime
+  rating Rating?
+  comment Comment?
+  user_id String
+  restaurant_id String
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  restaurant Restaurant @relation(fields: [restaurant_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, restaurant_id], name: "user_and_restaurant_id")
+}
+
+model Rating {
+  id String @id @default(uuid())
+  stars Float
+  review_id String 
+  review Review @relation(fields: [review_id], references:[id], onDelete: Cascade)
+}
+
+model Comment {
+  id String @id @default(uuid())
+  title String
+  text String @db.Text 
+  review_id String 
+  review Review @relation(fields: [review_id], references:[id], onDelete: Cascade)
+  reply Reply?
+}
+
+model Reply  {
+  id String @id @default(uuid())
+  title String 
+  text String @db.Text 
+  user_id String 
+  comment_id String @unique // one reply per comment
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment Comment @relation(fields: [comment_id], references: [id], onDelete: Cascade) 
+}

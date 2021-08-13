@@ -1,0 +1,67 @@
+# type Review {
+#   id: ID!
+#   visited: DateTime! # just gonna take this however it comes in, remember use toISOString() to convert it to the format the database likes
+#   rating: Rating
+#   comment: Comment
+#   user_id: String!
+#   restaurant_id: String!
+#   user: User
+#   restaurant: Restaurant
+# }
+
+# type Rating {
+#   # stars: StarRating!
+#   restaurant_id: String
+#   restaurant: Restaurant
+#   stars: Float!
+# }
+
+# type Comment {
+#   id: ID!
+#   title: String!
+#   text: String!
+#   restaurant_id: String
+#   reply_id: String
+#   review: Review
+#   reply: Reply
+# }
+
+extend type Query {
+  getReview(id: ID!): Review
+  getReviews(data: getReviewsInput!): ReviewsReturnData!
+  getReviewsByUser(userId: ID!): [Review]
+  getReviewsByRestaurant(restaurantId: ID!): [Review]
+  getReviewCount: Int!
+}
+
+extend type Mutation {
+  createReview(data: ReviewInput!): Review
+  updateReview(id: ID!, data: ReviewInput!): Review
+  deleteReview(id: ID!): Review
+}
+
+input getReviewsInput {
+  page: Int!
+  recordsPerPage: Int!
+}
+
+input ReviewInput {
+  visited: DateTime! # it'll come in as a string, in the backend stored as a SQL DateTime converted with toISOSTring
+  restaurant_id: String!
+  comment: CommentInput
+  rating: RatingInput
+}
+
+input CommentInput {
+  title: String!
+  text: String!
+}
+
+input RatingInput {
+  stars: Float! # using my custom scalar causes graphql playground to error when introspecting - have to solve this
+}
+
+type ReviewsReturnData {
+  reviews: [Review!]!
+  count: Int!
+}
