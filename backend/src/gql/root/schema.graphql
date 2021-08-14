@@ -70,7 +70,7 @@ type Comment {
 
 type Reply {
   id: ID!
-  title: String!
+  title: String
   text: String!
   user_id: String!
   comment_id: String!

@@ -47,7 +47,6 @@ export type CreateUserInput = {
   name: Scalars['String'];
   email: Scalars['String'];
   password: Scalars['String'];
-  role: UserRole;
 };
 
 
@@ -136,7 +135,7 @@ export type MutationCreateReplyArgs = {
 
 export type MutationUpdateReplyArgs = {
   id: Scalars['ID'];
-  data: ReplyInput;
+  text: Scalars['String'];
 };
 
 
@@ -253,7 +252,7 @@ export type RatingInput = {
 export type Reply = {
   __typename?: 'Reply';
   id: Scalars['ID'];
-  title: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
   text: Scalars['String'];
   user_id: Scalars['String'];
   comment_id: Scalars['String'];
@@ -264,7 +263,6 @@ export type Reply = {
 };
 
 export type ReplyInput = {
-  title: Scalars['String'];
   text: Scalars['String'];
   comment_id: Scalars['String'];
 };
@@ -346,8 +344,7 @@ export type UpdateUserInput = {
   idToUpdate: Scalars['ID'];
   name: Scalars['String'];
   email: Scalars['String'];
-  password: Scalars['String'];
-  role: UserRole;
+  password?: Maybe<Scalars['String']>;
 };
 
 
@@ -379,6 +376,7 @@ export type GetRestaurantsInput = {
   direction: AscendingOrDescending;
   page: Scalars['Int'];
   recordsPerPage: Scalars['Int'];
+  exclude_avg_below?: Maybe<Scalars['Float']>;
 };
 
 export type GetReviewsInput = {

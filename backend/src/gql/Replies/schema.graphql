@@ -21,12 +21,11 @@ extend type Query {
 
 extend type Mutation {
   createReply(data: ReplyInput!): Reply
-  updateReply(id: ID!, data: ReplyInput!): Reply
+  updateReply(id: ID!, text: String!): Reply
   deleteReply(id: ID!): Reply
 }
 
 input ReplyInput {
-  title: String!
   text: String!
   comment_id: String!
 }

@@ -62,8 +62,6 @@ const resolvers: Resolvers<ApolloContext> = {
         throw new Error(`User with ID ${userId} not found`)
       }
 
-      console.log("user is")
-      console.log(user)
       return user
     },
     // an admin level query that gets the info for any user

@@ -51,7 +51,7 @@ export type MutationDeleteReplyArgs = {
 
 export type MutationUpdateReplyArgs = {
   id: Scalars['ID'];
-  data: ReplyInput;
+  text: Scalars['String'];
 };
 
 export type Query = {
@@ -89,7 +89,7 @@ export type Rating = {
 export type Reply = {
   __typename?: 'Reply';
   id: Scalars['ID'];
-  title: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
   text: Scalars['String'];
   user_id: Scalars['String'];
   comment_id: Scalars['String'];
@@ -100,7 +100,6 @@ export type Reply = {
 };
 
 export type ReplyInput = {
-  title: Scalars['String'];
   text: Scalars['String'];
   comment_id: Scalars['String'];
 };
@@ -289,7 +288,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createReply?: Resolver<Maybe<ResolversTypes['Reply']>, ParentType, ContextType, RequireFields<MutationCreateReplyArgs, 'data'>>;
   deleteReply?: Resolver<Maybe<ResolversTypes['Reply']>, ParentType, ContextType, RequireFields<MutationDeleteReplyArgs, 'id'>>;
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  updateReply?: Resolver<Maybe<ResolversTypes['Reply']>, ParentType, ContextType, RequireFields<MutationUpdateReplyArgs, 'id' | 'data'>>;
+  updateReply?: Resolver<Maybe<ResolversTypes['Reply']>, ParentType, ContextType, RequireFields<MutationUpdateReplyArgs, 'id' | 'text'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -310,7 +309,7 @@ export type RatingResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type ReplyResolvers<ContextType = any, ParentType extends ResolversParentTypes['Reply'] = ResolversParentTypes['Reply']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   comment_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

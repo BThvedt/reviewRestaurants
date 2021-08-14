@@ -73,3 +73,29 @@ export const CREATE_REVIEW = gql`
     }
   }
 `
+
+export const CREATE_REPLY = gql`
+  mutation CreateReply($data: ReplyInput!) {
+    createReply(data: $data) {
+      id
+      text
+    }
+  }
+`
+
+export const UPDATE_REPLY = gql`
+  mutation UpdateReply($id: ID!, $text: String!) {
+    updateReply(id: $id, text: $text) {
+      id
+      text
+    }
+  }
+`
+
+export const DELETE_REPLY = gql`
+  mutation DeleteReply($id: ID!) {
+    deleteReply(id: $id) {
+      id
+    }
+  }
+`

@@ -104,7 +104,7 @@ export type RatingInput = {
 export type Reply = {
   __typename?: 'Reply';
   id: Scalars['ID'];
-  title: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
   text: Scalars['String'];
   user_id: Scalars['String'];
   comment_id: Scalars['String'];
@@ -346,7 +346,7 @@ export type RatingResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type ReplyResolvers<ContextType = any, ParentType extends ResolversParentTypes['Reply'] = ResolversParentTypes['Reply']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   comment_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

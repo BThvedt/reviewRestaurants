@@ -48,6 +48,7 @@ export const GET_REVIEWS = gql`
           stars
         }
         comment {
+          id
           title
           text
           reply {
@@ -84,6 +85,7 @@ export const GET_REVIEWS_BY_USER = gql`
         stars
       }
       comment {
+        id
         title
         text
         reply {
@@ -158,6 +160,7 @@ export const GET_RESTAURANTS_BY_OWNER = gql`
             stars
           }
           comment {
+            id
             title
             text
             reply {
@@ -189,6 +192,7 @@ export const GET_RESTAURANT = gql`
   query GetRestaurant($id: ID!) {
     getRestaurant(id: $id) {
       restaurant {
+        id
         name
         average_rating
         num_of_ratings
@@ -209,9 +213,11 @@ export const GET_RESTAURANT = gql`
             stars
           }
           comment {
+            id
             title
             text
             reply {
+              id
               text
             }
           }

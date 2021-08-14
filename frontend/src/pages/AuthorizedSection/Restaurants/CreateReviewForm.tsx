@@ -145,10 +145,7 @@ const CreateReviewForm: FC<IProps> = ({ restaurant_id, siteUser }) => {
           )}
           <h2 className="text-center text-lg m-4 font-bold">- Your Review -</h2>
           {hasRating && (
-            <div
-              className="flex items-center justify-center flex-col"
-              id="create-review-datepicker"
-            >
+            <div className="flex items-center justify-center flex-col">
               <label className="text-lg -mb-2">
                 Your Rating: {values.rating?.toFixed(1)}{" "}
                 {`Star${values.rating === 1 ? "" : "s"}`}

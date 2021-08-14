@@ -73,7 +73,7 @@ model Comment {
 
 model Reply  {
   id String @id @default(uuid())
-  title String 
+  title String? 
   text String @db.Text 
   user_id String 
   comment_id String @unique // one reply per comment

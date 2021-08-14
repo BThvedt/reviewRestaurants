@@ -212,7 +212,7 @@ let RestaurantDetail: FC<IProps> = ({ siteUser }) => {
             )}
             <CreateReviewForm restaurant_id={id} siteUser={siteUser} />
             {reviews && (
-              <div className="text-gray-700 ">
+              <div className="text-gray-700 w-full">
                 <p className="text-lg font-bold p-4 pb-2 text-center">
                   - Reviews and Ratings -
                 </p>

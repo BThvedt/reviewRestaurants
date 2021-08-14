@@ -22,9 +22,6 @@ if (process.env.REACT_APP_AUTH_METHOD === "Token") {
     (_, { headers }: { headers: Record<string, unknown> }) => {
       const token = localStorage.getItem("token")
 
-      console.log("token is")
-      console.log(token)
-
       return {
         headers: {
           ...headers,

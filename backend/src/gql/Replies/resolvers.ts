@@ -135,7 +135,7 @@ const resolvers: Resolvers<ApolloContext> = {
     createReply: async (parent, { data }, { prisma, req }, info) => {
       const { userId, role } = getUserIdAndRole(req)
 
-      let { title, text, comment_id } = data
+      let {  text, comment_id } = data
 
       let reply: Reply
       let restaurant: Restaurant
@@ -182,10 +182,8 @@ const resolvers: Resolvers<ApolloContext> = {
 
       return reply
     },
-    updateReply: async (parent, { id, data }, { prisma, req }, info) => {
+    updateReply: async (parent, { id, text }, { prisma, req }, info) => {
       const { userId, role } = getUserIdAndRole(req)
-
-      let { title, text, comment_id } = data
 
       let reply: Reply | null
 
@@ -203,7 +201,7 @@ const resolvers: Resolvers<ApolloContext> = {
         throw new Error(`Reply with id ${id} not found`)
       }
 
-      if (role !== "ADMIN" || reply.user_id !== userId) {
+      if (role !== "ADMIN" && reply.user_id !== userId) {
         throw new Error(`User does not have permission to update this reply!`)
       }
 
@@ -212,7 +210,9 @@ const resolvers: Resolvers<ApolloContext> = {
           where: {
             id
           },
-          data
+          data: {
+            text
+          }
         })
       } catch (e) {
         throw new Error(`Something went wrong updating the reply with id ${id}`)
@@ -224,6 +224,8 @@ const resolvers: Resolvers<ApolloContext> = {
       const { userId, role } = getUserIdAndRole(req)
       let reply: Reply | null
 
+      console.log('I AM HERE')
+
       try {
         reply = await prisma.reply.findUnique({
           where: {
@@ -238,9 +240,11 @@ const resolvers: Resolvers<ApolloContext> = {
         throw new Error(`Reply with id ${id} not found`)
       }
 
-      if (role !== "ADMIN" || reply.user_id !== userId) {
+      if (role !== "ADMIN" && reply.user_id !== userId) {
         throw new Error(`User does not have permission to delete this reply!`)
       }
+
+      console.log('I AM HERE')
 
       try {
         reply = await prisma.reply.delete({
