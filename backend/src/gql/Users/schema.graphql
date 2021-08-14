@@ -15,7 +15,7 @@ extend type Query {
   currentUser: User
   getUser(id: ID!): User
   getUserNameAndRole(id: ID!): NameAndRoleData
-  getUsers: [User]
+  getUsers(data: GetUsersInput!): UserReturnData!
   test: String
 }
 
@@ -25,6 +25,11 @@ extend type Mutation {
   deleteUser(id: ID!): User!
   login(data: LoginUserInput!): UserOrTokenPayload!
   logout: Boolean
+}
+
+input GetUsersInput {
+  page: Int!
+  recordsPerPage: Int!
 }
 
 input CreateUserInput {
@@ -43,6 +48,11 @@ input UpdateUserInput {
 input LoginUserInput {
   email: String!
   password: String!
+}
+
+type UserReturnData {
+  count: Int!
+  users: [User!]!
 }
 
 type TokenPayload {

@@ -115,3 +115,11 @@ export const DELETE_RESTAURANT = gql`
     }
   }
 `
+
+export const UPDATE_RESTAURANT = gql`
+  mutation UpdateRestaurant($id: ID!, $data: RestaurantInput!) {
+    updateRestaurant(id: $id, data: $data) {
+      id
+    }
+  }
+`

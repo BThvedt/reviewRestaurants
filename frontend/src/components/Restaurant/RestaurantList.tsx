@@ -13,6 +13,7 @@ import {
 import { DELETE_RESTAURANT } from "gql/mutations"
 import { GET_RESTAURANTS_BY_OWNER } from "gql/queries"
 import { useEffect } from "react"
+import EditRestaurantForm from "./EditRestaurantForm"
 
 interface IProps {
   restaurants: RestaurantReturnData[] | RestaurantOwnerReturnData[]
@@ -31,6 +32,7 @@ const isRestaurantOwnerData = (
 
 let RestaurantList: FC<IProps> = ({ restaurants, ownerId, siteUser }) => {
   const [showEditAndDeleteButton, setShowEditAndDeleteButton] = useState(false)
+  const [editingRestaurant, setEditingRestaurant] = useState(false)
   const [deleteRestaurant, { data }] = useMutation(DELETE_RESTAURANT, {
     refetchQueries: [
       {
@@ -108,9 +110,14 @@ let RestaurantList: FC<IProps> = ({ restaurants, ownerId, siteUser }) => {
             ) : (
               <></>
             )}
-            {showEditAndDeleteButton && (
+            {showEditAndDeleteButton && !editingRestaurant && (
               <div className="flex absolute right-2 bottom-2 ">
-                <p className=" text-sm  text-red-400 cursor-pointer hover:underline mr-4">
+                <p
+                  className=" text-sm  text-red-400 cursor-pointer hover:underline mr-4"
+                  onClick={() => {
+                    setEditingRestaurant(true)
+                  }}
+                >
                   Edit
                 </p>
                 <p
@@ -129,6 +136,14 @@ let RestaurantList: FC<IProps> = ({ restaurants, ownerId, siteUser }) => {
                   Delete
                 </p>
               </div>
+            )}
+            {editingRestaurant && ownerId && (
+              <EditRestaurantForm
+                restaurantId={id}
+                theRestaurantName={name}
+                setEditingRestaurant={setEditingRestaurant}
+                ownerId={ownerId}
+              />
             )}
           </ListContainer>
         )

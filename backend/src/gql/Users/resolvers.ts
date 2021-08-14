@@ -51,8 +51,6 @@ const resolvers: Resolvers<ApolloContext> = {
     currentUser: async (parent, args, { prisma, req }, info) => {
       const { userId } = getUserIdAndRole(req)
 
-      console.log("inside current user resolver")
-
       const user = await prisma.user.findUnique({
         where: {
           id: userId
@@ -80,9 +78,6 @@ const resolvers: Resolvers<ApolloContext> = {
       } catch (e) {
         throw new Error("Something went wrong reading the database")
       }
-
-      console.log(userId)
-      console.log(user?.id)
 
       if (role !== "ADMIN" && userId !== user?.id) {
         throw new Error("Only Admins can query other users data")
@@ -117,25 +112,29 @@ const resolvers: Resolvers<ApolloContext> = {
 
       return { name, role }
     },
-    getUsers: async (parent: any, args: any, { prisma, req }: any) => {
+    getUsers: async (parent: any, {data}, { prisma, req }: any) => {
       const { userId, role } = getUserIdAndRole(req)
 
       if (role !== "ADMIN") {
         throw new Error("User does not have permissions for this query")
       }
 
-      const user = await prisma.user.findUnique({
-        where: {
-          id: userId
-        }
-      })
+      let {page, recordsPerPage} = data
 
-      if (!user) {
-        throw new Error(`User with ID ${userId} not found`)
-      }
+      let [count, users] = await prisma.$transaction([
+        prisma.user.count(),
+        prisma.user.findMany({
+        take: recordsPerPage,
+            skip: recordsPerPage * page,
+      }),
+      ])
 
-      const users = await prisma.user.findMany()
-      return users
+      // const users = await prisma.user.findMany({
+      //   take: recordsPerPage,
+      //       skip: recordsPerPage * page,
+      // })
+
+      return {count, users}
     }
   },
   Mutation: {

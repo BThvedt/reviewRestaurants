@@ -354,7 +354,7 @@ const resolvers: Resolvers<ApolloContext> = {
         throw new Error(`Restaurant with id ${id} not found`)
       }
 
-      if (role !== "ADMIN" || userId !== restaurant.owner_id) {
+      if (role !== "ADMIN" && userId !== restaurant.owner_id) {
         throw new Error(`User does not have permission to update this review`)
       }
 
@@ -376,6 +376,8 @@ const resolvers: Resolvers<ApolloContext> = {
 
       let restaurant: Restaurant | null
 
+      console.log(`id is ${id}`)
+
       try {
         restaurant = await prisma.restaurant.findUnique({
           where: {
@@ -392,8 +394,9 @@ const resolvers: Resolvers<ApolloContext> = {
         throw new Error(`Restaurant with id ${id} not found`)
       }
 
-      if (role !== "ADMIN" || userId !== restaurant.owner_id) {
-        throw new Error(`User does not have permission to update this review`)
+      // sigh .. I really gotta stop mixing up my 'ands' and 'ors' lol I mean c'mon what could be easier
+      if (role !== "ADMIN" && userId !== restaurant.owner_id) {
+        throw new Error(`User does not have permission to delete this restaurant`)
       }
 
       try {

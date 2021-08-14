@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from "react"
 import { RestaurantOwnerReturnData } from "generated/graphql-frontend"
 import { GET_RESTAURANTS_BY_OWNER } from "gql/queries"
-import { CREATE_RESTAURANT } from "gql/mutations"
+import { CREATE_RESTAURANT, UPDATE_RESTAURANT } from "gql/mutations"
 import RestaurantList from "components/Restaurant/RestaurantList"
 import { CurrentUser } from "types"
 import { useMutation, useQuery } from "@apollo/client"

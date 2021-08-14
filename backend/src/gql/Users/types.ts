@@ -36,6 +36,11 @@ export type CreateUserInput = {
 };
 
 
+export type GetUsersInput = {
+  page: Scalars['Int'];
+  recordsPerPage: Scalars['Int'];
+};
+
 export type LoginUserInput = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -83,7 +88,7 @@ export type Query = {
   currentUser?: Maybe<User>;
   getUser?: Maybe<User>;
   getUserNameAndRole?: Maybe<NameAndRoleData>;
-  getUsers?: Maybe<Array<Maybe<User>>>;
+  getUsers: UserReturnData;
   root?: Maybe<Scalars['String']>;
   test?: Maybe<Scalars['String']>;
 };
@@ -96,6 +101,11 @@ export type QueryGetUserArgs = {
 
 export type QueryGetUserNameAndRoleArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryGetUsersArgs = {
+  data: GetUsersInput;
 };
 
 export type Rating = {
@@ -172,6 +182,12 @@ export type User = {
 };
 
 export type UserOrTokenPayload = User | TokenPayload;
+
+export type UserReturnData = {
+  __typename?: 'UserReturnData';
+  count: Scalars['Int'];
+  users: Array<User>;
+};
 
 export type UserRole =
   | 'REGULAR'
@@ -267,6 +283,8 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   CreateUserInput: CreateUserInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  GetUsersInput: GetUsersInput;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   LoginUserInput: LoginUserInput;
   Mutation: ResolverTypeWrapper<{}>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -276,12 +294,12 @@ export type ResolversTypes = {
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Reply: ResolverTypeWrapper<Reply>;
   Restaurant: ResolverTypeWrapper<Restaurant>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Review: ResolverTypeWrapper<Review>;
   TokenPayload: ResolverTypeWrapper<TokenPayload>;
   UpdateUserInput: UpdateUserInput;
   User: ResolverTypeWrapper<User>;
   UserOrTokenPayload: ResolversTypes['User'] | ResolversTypes['TokenPayload'];
+  UserReturnData: ResolverTypeWrapper<UserReturnData>;
   UserRole: UserRole;
 };
 
@@ -292,6 +310,8 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   CreateUserInput: CreateUserInput;
   DateTime: Scalars['DateTime'];
+  GetUsersInput: GetUsersInput;
+  Int: Scalars['Int'];
   LoginUserInput: LoginUserInput;
   Mutation: {};
   Boolean: Scalars['Boolean'];
@@ -301,12 +321,12 @@ export type ResolversParentTypes = {
   Float: Scalars['Float'];
   Reply: Reply;
   Restaurant: Restaurant;
-  Int: Scalars['Int'];
   Review: Review;
   TokenPayload: TokenPayload;
   UpdateUserInput: UpdateUserInput;
   User: User;
   UserOrTokenPayload: ResolversParentTypes['User'] | ResolversParentTypes['TokenPayload'];
+  UserReturnData: UserReturnData;
 };
 
 export type CommentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = {
@@ -343,7 +363,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   currentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   getUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryGetUserArgs, 'id'>>;
   getUserNameAndRole?: Resolver<Maybe<ResolversTypes['NameAndRoleData']>, ParentType, ContextType, RequireFields<QueryGetUserNameAndRoleArgs, 'id'>>;
-  getUsers?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
+  getUsers?: Resolver<ResolversTypes['UserReturnData'], ParentType, ContextType, RequireFields<QueryGetUsersArgs, 'data'>>;
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   test?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
@@ -418,6 +438,12 @@ export type UserOrTokenPayloadResolvers<ContextType = any, ParentType extends Re
   __resolveType: TypeResolveFn<'User' | 'TokenPayload', ParentType, ContextType>;
 };
 
+export type UserReturnDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserReturnData'] = ResolversParentTypes['UserReturnData']> = {
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   Comment?: CommentResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
@@ -431,6 +457,7 @@ export type Resolvers<ContextType = any> = {
   TokenPayload?: TokenPayloadResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserOrTokenPayload?: UserOrTokenPayloadResolvers<ContextType>;
+  UserReturnData?: UserReturnDataResolvers<ContextType>;
 };
 
 
