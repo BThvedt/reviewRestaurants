@@ -140,6 +140,11 @@ export type UserFieldPolicy = {
 	replies?: FieldPolicy<any> | FieldReadFunction<any>,
 	num_of_reviews?: FieldPolicy<any> | FieldReadFunction<any>
 };
+export type UserReturnDataKeySpecifier = ('count' | 'users' | UserReturnDataKeySpecifier)[];
+export type UserReturnDataFieldPolicy = {
+	count?: FieldPolicy<any> | FieldReadFunction<any>,
+	users?: FieldPolicy<any> | FieldReadFunction<any>
+};
 export type TypedTypePolicies = TypePolicies & {
 	Comment?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | CommentKeySpecifier | (() => undefined | CommentKeySpecifier),
@@ -200,5 +205,9 @@ export type TypedTypePolicies = TypePolicies & {
 	User?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | UserKeySpecifier | (() => undefined | UserKeySpecifier),
 		fields?: UserFieldPolicy,
+	},
+	UserReturnData?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | UserReturnDataKeySpecifier | (() => undefined | UserReturnDataKeySpecifier),
+		fields?: UserReturnDataFieldPolicy,
 	}
 };

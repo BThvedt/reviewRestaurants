@@ -79,6 +79,17 @@ const Toolbar: FC<IProps> = ({ siteUser, bodyClickToggle }) => {
         {siteUser?.id && (
           <div className="flex justify-left items-center ">
             <ul className="flex items-center justify-between text-base text-gray-700 pt-0 mr-8">
+              {siteUser.role === UserRole.Admin && (
+                <li
+                  className={`cursor-pointer py-4 block border-b-2 border-transparent hover:border-indigo-400 ml-4 text ${
+                    location.pathname.includes("users")
+                      ? "border-indigo-400 "
+                      : ""
+                  }`}
+                >
+                  <Link to={`/users/`}>User List</Link>
+                </li>
+              )}
               <li
                 className={`cursor-pointer py-4 block border-b-2 border-transparent hover:border-indigo-400 ml-4 text ${
                   location.pathname.includes("restaurants")

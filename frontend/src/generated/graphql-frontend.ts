@@ -50,6 +50,11 @@ export type CreateUserInput = {
 };
 
 
+export type GetUsersInput = {
+  page: Scalars['Int'];
+  recordsPerPage: Scalars['Int'];
+};
+
 export type LoginUserInput = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -160,7 +165,7 @@ export type Query = {
   currentUser?: Maybe<User>;
   getUser?: Maybe<User>;
   getUserNameAndRole?: Maybe<NameAndRoleData>;
-  getUsers?: Maybe<Array<Maybe<User>>>;
+  getUsers: UserReturnData;
   test?: Maybe<Scalars['String']>;
   getRestaurant: RestaurantData;
   getRestaurants: RestaurantsReturnData;
@@ -185,6 +190,11 @@ export type QueryGetUserArgs = {
 
 export type QueryGetUserNameAndRoleArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryGetUsersArgs = {
+  data: GetUsersInput;
 };
 
 
@@ -364,6 +374,12 @@ export type User = {
 };
 
 export type UserOrTokenPayload = User | TokenPayload;
+
+export type UserReturnData = {
+  __typename?: 'UserReturnData';
+  count: Scalars['Int'];
+  users: Array<User>;
+};
 
 export enum UserRole {
   Regular = 'REGULAR',

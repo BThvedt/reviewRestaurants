@@ -99,3 +99,11 @@ export const DELETE_REPLY = gql`
     }
   }
 `
+
+export const DELETE_USER = gql`
+  mutation DeleteUser($id: ID!) {
+    deleteUser(id: $id) {
+      id
+    }
+  }
+`

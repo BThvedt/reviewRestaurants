@@ -231,3 +231,17 @@ export const GET_RESTAURANT = gql`
     }
   }
 `
+
+export const GET_USERS = gql`
+  query GetUsers($data: GetUsersInput!) {
+    getUsers(data: $data) {
+      count
+      users {
+        id
+        name
+        role
+        email
+      }
+    }
+  }
+`

@@ -4,7 +4,7 @@ import {
   RestaurantReturnData,
   RestaurantsReturnData
 } from "generated/graphql-frontend"
-import { useQuery, useApolloClient } from "@apollo/client"
+import { useQuery } from "@apollo/client"
 import Pager from "components/Pager"
 import RestaurantList from "components/Restaurant/RestaurantList"
 import debounce from "lodash.debounce"
@@ -19,8 +19,6 @@ let AllRestaurants: FC = () => {
   const [restaurantList, setRestuarantList] = useState<RestaurantReturnData[]>(
     []
   )
-  const client = useApolloClient()
-
   // note to self: there should be a better way to type these useQueries, but can't quite get it to work
   // try to figure out sometime later
   const {
@@ -44,7 +42,6 @@ let AllRestaurants: FC = () => {
   })
 
   useEffect(() => {
-    console.log({})
     if (!loading && count) {
       setRestaurantCount(count)
     }
@@ -71,7 +68,12 @@ let AllRestaurants: FC = () => {
         <>
           <div className="flex mt-4 justify-evenly items-start space-around text-grey-700">
             <div className="flex flex-col mt-4 justify-center mr-8">
-              <p className="mb-2">Exlude Ratings Below</p>
+              <div>
+                <p className="mb-2">
+                  Exlude Ratings Below: &nbsp; {sliderVal} Stars
+                </p>
+              </div>
+
               <input
                 type="range"
                 min="0"
@@ -84,7 +86,6 @@ let AllRestaurants: FC = () => {
                   delayedQuery(parseFloat(e.target.value))
                 }}
               />
-              <p className="mr-2 w-16 mr-2">{sliderVal} Stars</p>
             </div>
 
             <div className="flex flex-col mt-4 justify-center mr-8">

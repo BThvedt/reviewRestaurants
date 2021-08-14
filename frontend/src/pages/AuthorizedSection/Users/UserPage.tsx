@@ -50,7 +50,7 @@ let UserPage: FC<IProps> = ({ siteUser }) => {
     }
   ]
 
-  if (siteUser.id === id) {
+  if (siteUser.id === id || siteUser.role === UserRole.Admin) {
     titlesAndLinks.push({
       title: "Profile",
       link: `/users/${id}/profile`
@@ -74,7 +74,7 @@ let UserPage: FC<IProps> = ({ siteUser }) => {
         title={`Reviews`}
         showMenu={
           nameAndRole.role === UserRole.RestaurantOwner ||
-          nameAndRole.role === UserRole.Admin ||
+          siteUser.role === UserRole.Admin ||
           id === siteUser.id
         }
       />

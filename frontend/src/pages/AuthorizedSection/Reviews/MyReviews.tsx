@@ -4,6 +4,7 @@ import { Review } from "generated/graphql-frontend"
 import { useQuery } from "@apollo/client"
 import { ReviewListItem } from "components"
 import { CurrentUser } from "types"
+import { Link } from "react-router-dom"
 
 interface ParamTypes {
   id: string
@@ -60,7 +61,13 @@ let MyReviews: FC<IProps> = ({ siteUser }) => {
           </div>
         </>
       ) : (
-        <p>You has no Reviews. Visit a restaurant to leave one!!</p>
+        <p className="m-2 text-center text-lg">
+          You has no Reviews.{" "}
+          <span className="font-bold hover:text-green-400 cursor-pointer">
+            <Link to="/restaurants/">Visit a restaurant</Link>
+          </span>{" "}
+          to leave one!!
+        </p>
       )}
     </div>
   )
