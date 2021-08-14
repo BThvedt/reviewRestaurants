@@ -98,11 +98,6 @@ let UserPage: FC<IProps> = ({ siteUser, paramsId }) => {
     return <p>There was an error Getting Restaurants</p>
   }
 
-  // if (paramsId !== siteUser.id && siteUser.role !== UserRole.Admin) {
-  //   // don't allow unauthorized to see the form no matter what
-  //   //setCreatingRestaurant(false)
-  // }
-
   return (
     <>
       <div className="flex justify-between items-center pb-4" />

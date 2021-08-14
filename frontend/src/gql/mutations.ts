@@ -107,3 +107,11 @@ export const DELETE_USER = gql`
     }
   }
 `
+
+export const DELETE_RESTAURANT = gql`
+  mutation DeleteUser($id: ID!) {
+    deleteRestaurant(id: $id) {
+      id
+    }
+  }
+`

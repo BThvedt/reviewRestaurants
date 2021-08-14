@@ -1,13 +1,18 @@
-import React, { FC } from "react"
+import React, { FC, useState } from "react"
 import RestaurantTitle from "./RestaurantTitle"
 import FeaturedReview from "./FeaturedReveiew"
 import ListContainer from "../ListContainer"
 import { CurrentUser } from "types"
 import { Link } from "react-router-dom"
+import { useQuery, useMutation } from "@apollo/client"
 import {
   RestaurantReturnData,
-  RestaurantOwnerReturnData
+  RestaurantOwnerReturnData,
+  UserRole
 } from "generated/graphql-frontend"
+import { DELETE_RESTAURANT } from "gql/mutations"
+import { GET_RESTAURANTS_BY_OWNER } from "gql/queries"
+import { useEffect } from "react"
 
 interface IProps {
   restaurants: RestaurantReturnData[] | RestaurantOwnerReturnData[]
@@ -25,6 +30,35 @@ const isRestaurantOwnerData = (
 }
 
 let RestaurantList: FC<IProps> = ({ restaurants, ownerId, siteUser }) => {
+  const [showEditAndDeleteButton, setShowEditAndDeleteButton] = useState(false)
+  const [deleteRestaurant, { data }] = useMutation(DELETE_RESTAURANT, {
+    refetchQueries: [
+      {
+        query: GET_RESTAURANTS_BY_OWNER,
+        variables: { ownerId }
+      }
+    ],
+    onCompleted: (data) => {
+      alert("restaurant deleted")
+    },
+    onError: (error) => {
+      console.log(error)
+      alert("There was an error deleting that restaurant")
+    }
+  })
+
+  useEffect(() => {
+    if (
+      (ownerId &&
+        siteUser &&
+        ownerId === siteUser.id &&
+        !showEditAndDeleteButton) ||
+      siteUser?.role === UserRole.Admin
+    ) {
+      setShowEditAndDeleteButton(true)
+    }
+  }, [ownerId, siteUser])
+
   return (
     <>
       {restaurants.map((restaurantData) => {
@@ -33,7 +67,7 @@ let RestaurantList: FC<IProps> = ({ restaurants, ownerId, siteUser }) => {
         const { restaurant, featured_review } = restaurantData
 
         // since I use this in multiple situations, have to typecheck AND check if the userId is the siteuser id
-        // could probably use a refactor
+        // could probably use a refactor. Hmmmm ..
         if (isRestaurantOwnerData(restaurantData)) {
           if (ownerId && siteUser && ownerId !== siteUser.id) {
             reviews_pending_reply = null
@@ -73,6 +107,28 @@ let RestaurantList: FC<IProps> = ({ restaurants, ownerId, siteUser }) => {
               </Link>
             ) : (
               <></>
+            )}
+            {showEditAndDeleteButton && (
+              <div className="flex absolute right-2 bottom-2 ">
+                <p className=" text-sm  text-red-400 cursor-pointer hover:underline mr-4">
+                  Edit
+                </p>
+                <p
+                  className=" text-sm  text-red-400 cursor-pointer hover:underline"
+                  onClick={() => {
+                    if (window.confirm("Really delete this restaurant?")) {
+                      console.log(`ID IS ${id}`)
+                      deleteRestaurant({
+                        variables: {
+                          id
+                        }
+                      })
+                    }
+                  }}
+                >
+                  Delete
+                </p>
+              </div>
             )}
           </ListContainer>
         )

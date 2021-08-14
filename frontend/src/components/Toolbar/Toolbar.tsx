@@ -82,9 +82,7 @@ const Toolbar: FC<IProps> = ({ siteUser, bodyClickToggle }) => {
               {siteUser.role === UserRole.Admin && (
                 <li
                   className={`cursor-pointer py-4 block border-b-2 border-transparent hover:border-indigo-400 ml-4 text ${
-                    location.pathname.includes("users")
-                      ? "border-indigo-400 "
-                      : ""
+                    location.pathname === "/users/" ? "border-indigo-400 " : ""
                   }`}
                 >
                   <Link to={`/users/`}>User List</Link>
