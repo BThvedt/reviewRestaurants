@@ -292,6 +292,10 @@ const resolvers: Resolvers<ApolloContext> = {
         )
       }
 
+      if (!name) {
+        throw new Error("Empty names are not allowed")
+      }
+
       let restaurant: Restaurant
 
       try {
@@ -396,7 +400,9 @@ const resolvers: Resolvers<ApolloContext> = {
 
       // sigh .. I really gotta stop mixing up my 'ands' and 'ors' lol I mean c'mon what could be easier
       if (role !== "ADMIN" && userId !== restaurant.owner_id) {
-        throw new Error(`User does not have permission to delete this restaurant`)
+        throw new Error(
+          `User does not have permission to delete this restaurant`
+        )
       }
 
       try {

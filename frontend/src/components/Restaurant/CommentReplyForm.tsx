@@ -17,7 +17,7 @@ const classes = {
 }
 
 interface IProps {
-  comment_id: string
+  comment_id?: string
   siteUser: CurrentUser
   restaurant_id: string
   existingReply?: Reply

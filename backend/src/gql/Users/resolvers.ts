@@ -112,21 +112,21 @@ const resolvers: Resolvers<ApolloContext> = {
 
       return { name, role }
     },
-    getUsers: async (parent: any, {data}, { prisma, req }: any) => {
+    getUsers: async (parent: any, { data }, { prisma, req }: any) => {
       const { userId, role } = getUserIdAndRole(req)
 
       if (role !== "ADMIN") {
         throw new Error("User does not have permissions for this query")
       }
 
-      let {page, recordsPerPage} = data
+      let { page, recordsPerPage } = data
 
       let [count, users] = await prisma.$transaction([
         prisma.user.count(),
         prisma.user.findMany({
-        take: recordsPerPage,
-            skip: recordsPerPage * page,
-      }),
+          take: recordsPerPage,
+          skip: recordsPerPage * page
+        })
       ])
 
       // const users = await prisma.user.findMany({
@@ -134,7 +134,7 @@ const resolvers: Resolvers<ApolloContext> = {
       //       skip: recordsPerPage * page,
       // })
 
-      return {count, users}
+      return { count, users }
     }
   },
   Mutation: {
@@ -163,7 +163,7 @@ const resolvers: Resolvers<ApolloContext> = {
             password: hashedPassword
           }
         })
-      } catch (e) {
+      } catch (e: any) {
         if (e.message) {
           throw new Error(e.message)
         } else {
@@ -253,6 +253,8 @@ const resolvers: Resolvers<ApolloContext> = {
     login: async (parent, args, { prisma, req, res }, info) => {
       let user
 
+      console.log("in login")
+
       try {
         user = await prisma.user.findUnique({
           where: {
@@ -263,15 +265,22 @@ const resolvers: Resolvers<ApolloContext> = {
         throw new Error(`Could not connect to the database!!`)
       }
 
+      console.log("I am here")
+      console.log(user)
+
       if (!user) {
         throw new Error(`User with email ${args.data.email} not found`)
       }
 
       const isMatch = await bcrypt.compare(args.data.password, user.password)
 
+      console.log(isMatch)
+
       if (!isMatch) {
         throw new Error(`Password does not match`)
       }
+
+      console.log(user)
 
       if (process.env.AUTH_METHOD === "Token") {
         return {

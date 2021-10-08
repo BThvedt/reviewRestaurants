@@ -89,7 +89,7 @@ let CommentReply: FC<IProps> = ({
             + Add Reply
           </h1> */}
           <CommentReplyForm
-            comment_id={review.comment!.id}
+            comment_id={review.comment?.id}
             siteUser={siteUser}
             restaurant_id={restaurant.id}
           />
