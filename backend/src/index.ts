@@ -23,7 +23,7 @@ app.use(cors(corsOptions))
 
 app.use(
   cookieSession({
-    name: "coursebuilder",
+    name: "reviewRestaurants",
     signed: false,
     httpOnly: true,
     secure: false
@@ -50,7 +50,6 @@ const start = async () => {
   })
 
   app.listen({ port: 5000 }, () => {
-    //console.log(`🚀 Server ready at http://localhost:3000${server.graphqlPath}`)
     console.log(`🚀 Server ready at http://localhost:5000`)
   })
 }
