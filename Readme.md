@@ -15,7 +15,7 @@ Then run:
 
 `npx prisma db seed --preview-feature`
 
-This generates a bunch of dummy dta.
+This generates a bunch of dummy data.
 
 In the frontend folder use `npm run start` to start the frontend on localhost:3000
 In the backend folder use `npm run dev` to start the backend on localhost:5000
